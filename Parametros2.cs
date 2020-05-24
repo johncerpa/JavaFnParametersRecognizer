@@ -13,7 +13,8 @@ namespace Parametros2
 
             while (sw == 1)
             {
-                Console.Write("Escriba el parámetro que desea validar: ");
+                Console.WriteLine("Escriba los parametros que desea validar separados por comas");
+                Console.Write("Parametros >> ");
 
                 // Se lee la entrada y se quitan los espacios del lado izquierdo y derecho
                 string ParamValid = Console.ReadLine().Trim();
@@ -30,12 +31,14 @@ namespace Parametros2
                 bool idUsaPalabraReserv = false;
                 int elemsAVerificar = 0;
 
-
                 String[] id = new String[elems.Length]; // Vector de identificadores
 
                 // Guardar identificadores
                 for (int i = 0; i < elems.Length; i++)
                 {
+                    elems[i] = elems[i].Trim();
+                    Console.WriteLine(elems[i]);
+
                     int corchAbre = elems[i].IndexOf("["); // indice del primer corchete abre
                     int corchCierr = elems[i].IndexOf("]"); // indice del primer corchete cierra
                     if (corchAbre == -1 && corchCierr == -1)
@@ -47,8 +50,8 @@ namespace Parametros2
                         {
                             // Expresion regular para separar pos un espacio o más
                             // Ejemplo: "Hola a" => ["Hola", "a"], ["int", "b"]
-                            string pt = @"\s+";
-                            string[] valor = System.Text.RegularExpressions.Regex.Split(elems[i], pt);
+                            String pt = @"\s+";
+                            String[] valor = System.Text.RegularExpressions.Regex.Split(elems[i].Trim(), pt);
 
                             if (valor.Length == 2)
                             {
@@ -96,39 +99,41 @@ namespace Parametros2
                             }
                         }
                     }
+                }
 
-                    Regex v = new Regex(reserv);
+                Regex v = new Regex(reserv);
 
-                    for (int y = 0; y < elemsAVerificar; y++)
+                for (int y = 0; y < elemsAVerificar; y++)
+                {
+                    // Esta usando una palabra reservada
+                    if (v.IsMatch(id[y].Trim()))
                     {
-                        // Esta usando una palabra reservada
-                        if (v.IsMatch(id[y]))
-                        {
-                            idUsaPalabraReserv = true;
-                        }
+                        idUsaPalabraReserv = true;
                     }
+                }
 
-                    // Verificar que identificadores no sean iguales
-                    for (int y = 0; y < elemsAVerificar - 1; y++)
+                // Verificar que identificadores no sean iguales
+                for (int y = 0; y < elemsAVerificar - 1; y++)
+                {
+                    for (int j = y + 1; j < elems.Length; j++)
                     {
-                        for (int j = y + 1; j < elems.Length; j++)
+                        if (id[y] == id[j])
                         {
-                            if (id[y] == id[j])
-                            {
-                                hayIdsRepetidos = true;
-                            }
+                            hayIdsRepetidos = true;
                         }
                     }
                 }
 
                 for (int i = 0; i < elems.Length; i++)
                 {
-                    String substr = elems[i].Substring(0, 5);
-                    if (substr == "final")
-                    {
-                        elems[i] = elems[i].Substring(5).Trim();
+                    if (elems[i].Length > 4) {
+                        String substr = elems[i].Substring(0, 5);
+                        if (substr == "final")
+                        {
+                            elems[i] = elems[i].Substring(5).Trim();
+                        }
                     }
-
+                    
                     if (!verificarParam(elems[i]))
                     {
                         Console.WriteLine("Error en el parametro " + (i + 1));
@@ -166,16 +171,16 @@ namespace Parametros2
         {
 
             // Palabras reservadas para tipos
-            String reserv = @"^(byte|short|int|long|float|double|bool|char|String|Array|Byte|Short|Integer|Long|Float|Double|Boolean|Character)";
+            String reserv = @"^(byte|short|int|long|float|double|bool|char|String|Array|Byte|Short|Integer|Long|Float|Double|Boolean|Character|[a-zA-Z_$][a-zA-Z_$0-9]*)";
 
-            // int a, String b
+            /* // int a, String b
             String exp1 = reserv + @"\s+[a-zA-Z_$][a-zA-Z_$0-9]*$";
             Regex r1 = new Regex(exp1);
 
             if (r1.IsMatch(elem))
             {
                 return true;
-            }
+            } */
 
             // int[] a, int[]a, int[   ]a, int [] [] [] a
             String exp2 = reserv + @"\s*(\[\s*\]\s*)*\s*[a-zA-Z_$][a-zA-Z_$0-9]*$";
@@ -187,7 +192,7 @@ namespace Parametros2
             }
 
             // int a[] [] [], int b[][][]
-            String exp3 = reserv + @"\s*[a-zA-Z_$][a-zA-Z_$0-9]*\s*(\[\s*\]\s*)*$";
+            String exp3 = reserv + @"\s+[a-zA-Z_$][a-zA-Z_$0-9]*\s*(\[\s*\]\s*)*$";
             Regex r3 = new Regex(exp3);
 
             if (r3.IsMatch(elem))
