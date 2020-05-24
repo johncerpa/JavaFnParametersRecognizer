@@ -5,6 +5,8 @@ namespace Parametros2
 {
     class Program
     {
+        static String reserv = @"^(byte|short|int|long|float|double|bool|char|String|Array|Byte|Short|Integer|Long|Float|Double|Boolean|Character)";
+
         static void Main(string[] args)
         {
             int sw = 1;
@@ -25,7 +27,9 @@ namespace Parametros2
 
                 bool noHayError = true;
                 bool hayIdsRepetidos = false;
+                bool idUsaPalabraReserv = false;
                 int elemsAVerificar = 0;
+
 
                 String[] id = new String[elems.Length]; // Vector de identificadores
 
@@ -93,6 +97,17 @@ namespace Parametros2
                         }
                     }
 
+                    Regex v = new Regex(reserv);
+
+                    for (int y = 0; y < elemsAVerificar; y++)
+                    {
+                        // Esta usando una palabra reservada
+                        if (v.IsMatch(id[y]))
+                        {
+                            idUsaPalabraReserv = true;
+                        }
+                    }
+
                     // Verificar que identificadores no sean iguales
                     for (int y = 0; y < elemsAVerificar - 1; y++)
                     {
@@ -100,7 +115,6 @@ namespace Parametros2
                         {
                             if (id[y] == id[j])
                             {
-                                Console.WriteLine("Error, hay identificadores repetidos");
                                 hayIdsRepetidos = true;
                             }
                         }
@@ -122,7 +136,17 @@ namespace Parametros2
                     }
                 }
 
-                if (noHayError && !hayIdsRepetidos)
+                if (hayIdsRepetidos)
+                {
+                    Console.WriteLine("Error, hay identificadores repetidos");
+                }
+
+                if (idUsaPalabraReserv)
+                {
+                    Console.WriteLine("Error, hay identificadores usando palabras reservadas");
+                }
+
+                if (noHayError && !hayIdsRepetidos && !idUsaPalabraReserv)
                 {
                     Console.WriteLine("Los parametros estan bien escritos");
                 }
