@@ -30,8 +30,7 @@ namespace Parametros2 {
                             String[] valor = System.Text.RegularExpressions.Regex.Split(elems[i].Trim(), @"\s+");
                             if (valor.Length == 2) { id[elemsAVerificar++] = valor[1]; }
                         }
-                    }
-                    else { // Entra aqui si el parametro es un vector o una matriz
+                    } else { // Entra aqui si el parametro es un vector o una matriz
                         int corchUltimoIdx = elems[i].LastIndexOf("]");
                         if (corchUltimoIdx > -1) {
                             if (corchUltimoIdx == elems[i].Length - 1) { // Ej: Clase a[][], int b [] []
