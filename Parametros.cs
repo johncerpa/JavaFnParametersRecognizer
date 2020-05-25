@@ -5,74 +5,54 @@ namespace Parametros2
 {
     class Program
     {
-        static String reserv = @"^(byte|short|int|long|float|double|bool|char|String|Array|Byte|Short|Integer|Long|Float|Double|Boolean|Character)";
+        static String reserv = @"^(byte|short|int|long|float|double|bool|char|String|Array|Byte|Short|Integer|Long|Float|Double|Boolean|Character|[a-zA-Z_$][a-zA-Z_$0-9]*)";
 
         static void Main(string[] args)
         {
             int sw = 1;
-
             while (sw == 1)
             {
                 Console.WriteLine("Escriba los parametros que desea validar separados por comas");
                 Console.Write("Parametros >> ");
+                String ParamValid = Console.ReadLine().Trim();
 
-                // Se lee la entrada y se quitan los espacios del lado izquierdo y derecho
-                string ParamValid = Console.ReadLine().Trim();
+                String pattern = @"\s*,\s*";
+                String[] elems = System.Text.RegularExpressions.Regex.Split(ParamValid, pattern);
 
-                // Expresion regular para separar por comas
-                // Ejemplo: "Hola a , int b" => Resulta en ["Hola a", "int b"]
-                string pattern = @"\s*,\s*";
-
-                // Hace la separación de arriba con el patrón dado
-                string[] elems = System.Text.RegularExpressions.Regex.Split(ParamValid, pattern);
-
-                bool noHayError = true;
-                bool hayIdsRepetidos = false;
-                bool idUsaPalabraReserv = false;
+                bool noHayError = true, hayIdsRepetidos = false, idUsaPalabraReserv = false;
                 int elemsAVerificar = 0;
 
                 String[] id = new String[elems.Length]; // Vector de identificadores
 
-                // Guardar identificadores
                 for (int i = 0; i < elems.Length; i++)
                 {
                     elems[i] = elems[i].Trim();
-                    Console.WriteLine(elems[i]);
+                    int corchAbre = elems[i].IndexOf("[");
+                    int corchCierr = elems[i].IndexOf("]");
 
-                    int corchAbre = elems[i].IndexOf("["); // indice del primer corchete abre
-                    int corchCierr = elems[i].IndexOf("]"); // indice del primer corchete cierra
                     if (corchAbre == -1 && corchCierr == -1)
                     {
-                        // Se busca el primer indice de un espacio
                         int spaceIdx = elems[i].IndexOf(" ");
 
                         if (spaceIdx > -1)
                         {
-                            // Expresion regular para separar pos un espacio o más
-                            // Ejemplo: "Hola a" => ["Hola", "a"], ["int", "b"]
+                            // Ejemplo: "Hola a" => ["Hola", "a"]
                             String pt = @"\s+";
                             String[] valor = System.Text.RegularExpressions.Regex.Split(elems[i].Trim(), pt);
 
                             if (valor.Length == 2)
                             {
-                                // Si se encuentran el tipo y el identificador sin error, se guardan
-                                id[elemsAVerificar] = valor[1]; // Identificadores para comparar que no se repitan
+                                id[elemsAVerificar] = valor[1];
                                 ++elemsAVerificar;
                             }
                         }
                     }
-                    else
+                    else // Entra aqui si el parametro es un vector o una matriz
                     {
-                        // Entra aqui si el parametro es un vector o una matriz
-                        // Ej.: int[] a, int[][]b, int c[][]
-
-                        // Busca el ultimo indice de "]"
                         int corchUltimoIdx = elems[i].LastIndexOf("]");
 
-                        // Si no se encuentra el indice de "]" se marca el error
                         if (corchUltimoIdx > -1)
                         {
-                            // En caso de no encontrar error, se guardan
                             if (corchUltimoIdx == elems[i].Length - 1)
                             {
                                 // Ejemplo: Clase a[][], int b [] []
@@ -80,10 +60,9 @@ namespace Parametros2
 
                                 if (primerCorch > -1)
                                 {
-                                    string toSplit = elems[i].Substring(0, primerCorch).Trim();
-
-                                    string patron = @"\s+";
-                                    string[] valor = System.Text.RegularExpressions.Regex.Split(toSplit, patron);
+                                    String toSplit = elems[i].Substring(0, primerCorch).Trim();
+                                    String patron = @"\s+";
+                                    String[] valor = System.Text.RegularExpressions.Regex.Split(toSplit, patron);
 
                                     if (valor.Length == 2)
                                     {
@@ -105,8 +84,7 @@ namespace Parametros2
 
                 for (int y = 0; y < elemsAVerificar; y++)
                 {
-                    // Esta usando una palabra reservada
-                    if (v.IsMatch(id[y].Trim()))
+                    if (v.IsMatch(id[y].Trim())) // Esta usando una palabra reservada
                     {
                         idUsaPalabraReserv = true;
                     }
@@ -124,16 +102,17 @@ namespace Parametros2
                     }
                 }
 
-                for (int i = 0; i < elems.Length; i++)
+                for (int i = 0; i < elems.Length; i++) // Ej.: final int a
                 {
-                    if (elems[i].Length > 4) {
+                    if (elems[i].Length > 4)
+                    {
                         String substr = elems[i].Substring(0, 5);
                         if (substr == "final")
                         {
                             elems[i] = elems[i].Substring(5).Trim();
                         }
                     }
-                    
+
                     if (!verificarParam(elems[i]))
                     {
                         Console.WriteLine("Error en el parametro " + (i + 1));
@@ -157,7 +136,7 @@ namespace Parametros2
                 }
 
                 Console.Write("¿Desea continuar? (1: si/ 0: no): ");
-                string opc = Console.ReadLine();
+                String opc = Console.ReadLine();
 
                 if (opc != "1")
                 {
@@ -169,21 +148,8 @@ namespace Parametros2
 
         static bool verificarParam(String elem)
         {
-
-            // Palabras reservadas para tipos
-            String reserv = @"^(byte|short|int|long|float|double|bool|char|String|Array|Byte|Short|Integer|Long|Float|Double|Boolean|Character|[a-zA-Z_$][a-zA-Z_$0-9]*)";
-
-            /* // int a, String b
-            String exp1 = reserv + @"\s+[a-zA-Z_$][a-zA-Z_$0-9]*$";
-            Regex r1 = new Regex(exp1);
-
-            if (r1.IsMatch(elem))
-            {
-                return true;
-            } */
-
             // int[] a, int[]a, int[   ]a, int [] [] [] a
-            String exp2 = reserv + @"\s*(\[\s*\]\s*)*\s*[a-zA-Z_$][a-zA-Z_$0-9]*$";
+            String exp2 = reserv + @"\s*(\[\s*\]\s*)+\s*[a-zA-Z_$][a-zA-Z_$0-9]*$";
             Regex r2 = new Regex(exp2);
 
             if (r2.IsMatch(elem))
