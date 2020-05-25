@@ -26,8 +26,7 @@ namespace Parametros2 {
                     }
 
                     if (elems[i].IndexOf("[") == -1 && elems[i].IndexOf("]") == -1) {
-                        if (elems[i].IndexOf(" ") > -1) // Ej: "Hola a" => ["Hola", "a"]
-                        {
+                        if (elems[i].IndexOf(" ") > -1) { // Ej: "Hola a" => ["Hola", "a"]
                             String[] valor = System.Text.RegularExpressions.Regex.Split(elems[i].Trim(), @"\s+");
                             if (valor.Length == 2) { id[elemsAVerificar++] = valor[1]; }
                         }
@@ -37,13 +36,11 @@ namespace Parametros2 {
                         if (corchUltimoIdx > -1) {
                             if (corchUltimoIdx == elems[i].Length - 1) { // Ej: Clase a[][], int b [] []
                                 int primerCorch = elems[i].IndexOf("[");
-
                                 if (primerCorch > -1) {
                                     String[] valor = System.Text.RegularExpressions.Regex.Split(elems[i].Substring(0, primerCorch).Trim(),  @"\s+");
                                     if (valor.Length == 2) { id[elemsAVerificar++] = valor[1]; }
                                 }
-                            }
-                            else if(corchUltimoIdx < elems[i].Length - 1) {
+                            } else if(corchUltimoIdx < elems[i].Length - 1) {
                                 id[elemsAVerificar++] = elems[i].Substring(corchUltimoIdx + 1);
                             }
                         }
