@@ -55,7 +55,7 @@ namespace Parametros2
                             }
                             else if (corchUltimoIdx < elems[i].Length - 1)
                             {
-                                id[elemsAVerificar++] = elems[i].Substring(corchUltimoIdx + 1);
+                                id[elemsAVerificar++] = elems[i].Substring(corchUltimoIdx + 1).Trim();
                             }
                         }
                     }
