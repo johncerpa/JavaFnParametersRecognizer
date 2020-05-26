@@ -5,7 +5,7 @@ namespace Parametros2
 {
     class Program
     {
-        static String reserv = @"^(byte|short|int|long|float|double|boolean|char|String|Arrays|Byte|Short|Integer|Long|Float|Double|Boolean|Character|[a-zA-Z_$][a-zA-Z_$0-9]*)";
+        static String reserv = @"^(byte|short|int|long|float|double|boolean|char|String|Byte|Short|Integer|Long|Float|Double|Boolean|Character|[a-zA-Z_$][a-zA-Z_$0-9]*)";
 
         static void Main(string[] args)
         {
@@ -61,7 +61,7 @@ namespace Parametros2
                     }
                 }
 
-                Regex v = new Regex(@"^(byte|short|int|long|float|double|boolean|char|String|Arrays|Byte|Short|Integer|Long|Float|Double|Boolean|Character)");
+                Regex v = new Regex(@"^(byte|short|int|Integer|long|float|double|Double|boolean|Boolean|char|String|Byte|Short|Long|Float|Character|abstract|catch|final|implements|native|public|switch|true|false|assert|do|finally|import|new|return|synchronized|try|class|else|instanceof|null|short|this|void|break|const|enum|for|package|static|throw|volatile|continue|extends|goto|interface|private|strictfp|throws|while|case|default|if|protected|super|transient)");
                 for (int y = 0; y < elemsAVerificar; y++)
                 {
                     if (v.IsMatch(id[y].Trim())) { idUsaPalabraReserv = true; } // Esta usando una palabra reservada?
